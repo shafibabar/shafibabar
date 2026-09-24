@@ -1,25 +1,40 @@
+/* Site-wide behavior: theme switch, mobile nav, current-page highlight,
+   scroll reveal. Each feature is an independent init function that no-ops
+   when its markup isn't on the page. */
 (function () {
   "use strict";
 
-  function safeGet(key) {
-    try { return localStorage.getItem(key); } catch (e) { return null; }
+  var root = document.documentElement;
+  var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function storedTheme() {
+    try { return localStorage.getItem("theme"); } catch (e) { return null; }
   }
-  function safeSet(key, value) {
-    try { localStorage.setItem(key, value); } catch (e) { /* ignore */ }
+  function storeTheme(value) {
+    try { localStorage.setItem("theme", value); } catch (e) { /* storage blocked */ }
   }
 
+  /* Theme: the <head> script already set data-theme before first paint.
+     Here we wire the switch and follow OS changes until the user picks. */
   function initTheme() {
     var toggle = document.querySelector("[data-theme-toggle]");
+
+    function apply(theme) {
+      root.setAttribute("data-theme", theme);
+      if (toggle) toggle.setAttribute("aria-checked", String(theme === "dark"));
+    }
+
+    apply(root.getAttribute("data-theme") || (darkQuery.matches ? "dark" : "light"));
+
+    darkQuery.addEventListener("change", function (event) {
+      if (!storedTheme()) apply(event.matches ? "dark" : "light");
+    });
+
     if (!toggle) return;
     toggle.addEventListener("click", function () {
-      var root = document.documentElement;
-      var current = root.getAttribute("data-theme");
-      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      var isDark = current ? current === "dark" : prefersDark;
-      var next = isDark ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      safeSet("theme", next);
-      toggle.setAttribute("aria-pressed", String(next === "dark"));
+      var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      apply(next);
+      storeTheme(next);
     });
   }
 
@@ -28,33 +43,30 @@
     var links = document.querySelector("[data-nav-links]");
     if (!toggle || !links) return;
 
-    function close() {
-      links.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-    function open() {
-      links.classList.add("is-open");
-      toggle.setAttribute("aria-expanded", "true");
+    function setOpen(open) {
+      links.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
     }
 
     toggle.addEventListener("click", function () {
-      var isOpen = links.classList.contains("is-open");
-      if (isOpen) close(); else open();
+      setOpen(!links.classList.contains("is-open"));
     });
     links.addEventListener("click", function (event) {
-      if (event.target.tagName === "A") close();
+      if (event.target.closest("a")) setOpen(false);
     });
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape" && links.classList.contains("is-open")) {
+        setOpen(false);
+        toggle.focus();
+      }
     });
   }
 
   function highlightCurrentNav() {
-    var links = document.querySelectorAll("[data-nav-links] a");
-    var here = window.location.pathname.replace(/\/index\.html$/, "/");
-    links.forEach(function (link) {
-      var target = new URL(link.getAttribute("href"), window.location.href).pathname.replace(/\/index\.html$/, "/");
-      if (target === here) {
+    var normalize = function (path) { return path.replace(/\/index\.html$/, "/"); };
+    var here = normalize(window.location.pathname);
+    document.querySelectorAll("[data-nav-links] a").forEach(function (link) {
+      if (normalize(new URL(link.getAttribute("href"), window.location.href).pathname) === here) {
         link.setAttribute("aria-current", "page");
       }
     });
@@ -63,25 +75,24 @@
   function initScrollReveal() {
     var items = document.querySelectorAll(".reveal");
     if (!items.length) return;
-    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) {
       items.forEach(function (el) { el.classList.add("is-visible"); });
       return;
     }
-    var observer = new IntersectionObserver(function (entries, obs) {
+    var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add("is-visible");
-          obs.unobserve(entry.target);
+          observer.unobserve(entry.target);
         }
       });
     }, { rootMargin: "0px 0px -60px 0px" });
     items.forEach(function (el) { observer.observe(el); });
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    initTheme();
-    initNavToggle();
-    highlightCurrentNav();
-    initScrollReveal();
-  });
+  initTheme();
+  initNavToggle();
+  highlightCurrentNav();
+  initScrollReveal();
 })();
