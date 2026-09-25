@@ -62,12 +62,24 @@
     });
   }
 
+  /* Exact page match first; pages outside the main nav (design-system,
+     case study entries) name their parent with <body data-nav-parent>. */
   function highlightCurrentNav() {
     var normalize = function (path) { return path.replace(/\/index\.html$/, "/"); };
     var here = normalize(window.location.pathname);
-    document.querySelectorAll("[data-nav-links] a").forEach(function (link) {
+    var parent = document.body.getAttribute("data-nav-parent");
+    var links = document.querySelectorAll("[data-nav-links] a");
+    var matched = false;
+    links.forEach(function (link) {
       if (normalize(new URL(link.getAttribute("href"), window.location.href).pathname) === here) {
         link.setAttribute("aria-current", "page");
+        matched = true;
+      }
+    });
+    if (matched || !parent) return;
+    links.forEach(function (link) {
+      if (new URL(link.getAttribute("href"), window.location.href).pathname.split("/").pop() === parent) {
+        link.setAttribute("aria-current", "true");
       }
     });
   }

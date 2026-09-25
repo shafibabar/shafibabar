@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="Helvetica, Arial, sans-serif">
+  <title>Component demo: cluttered form wireframe</title>
+  <rect width="640" height="400" fill="#f3f5f9"/>
+  <rect x="0" y="0" width="640" height="40" fill="#d5dbe6"/>
+  <text x="20" y="25" font-size="13" fill="#3b475c">Component demo · Before</text>
+  <g fill="#ffffff" stroke="#b7c1d0">
+    <rect x="20" y="60" width="290" height="300" rx="4"/>
+    <rect x="330" y="60" width="290" height="300" rx="4"/>
+  </g>
+  <g fill="#8391a8" font-size="9">
+    <text x="36" y="84">FIELD A *</text><text x="176" y="84">FIELD B</text>
+    <text x="36" y="134">FIELD C *</text><text x="176" y="134">FIELD D *</text>
+    <text x="36" y="184">FIELD E</text><text x="176" y="184">FIELD F</text>
+    <text x="36" y="234">FIELD G *</text><text x="176" y="234">FIELD H</text>
+    <text x="346" y="84">FIELD I</text><text x="486" y="84">FIELD J *</text>
+    <text x="346" y="134">FIELD K</text><text x="486" y="134">FIELD L</text>
+    <text x="346" y="184">FIELD M *</text><text x="486" y="184">FIELD N</text>
+  </g>
+  <g fill="#e9edf3" stroke="#c3cad6">
+    <rect x="36" y="90" width="124" height="24"/><rect x="176" y="90" width="124" height="24"/>
+    <rect x="36" y="140" width="124" height="24"/><rect x="176" y="140" width="124" height="24"/>
+    <rect x="36" y="190" width="124" height="24"/><rect x="176" y="190" width="124" height="24"/>
+    <rect x="36" y="240" width="124" height="24"/><rect x="176" y="240" width="124" height="24"/>
+    <rect x="346" y="90" width="124" height="24"/><rect x="486" y="90" width="124" height="24"/>
+    <rect x="346" y="140" width="124" height="24"/><rect x="486" y="140" width="124" height="24"/>
+    <rect x="346" y="190" width="124" height="24"/><rect x="486" y="190" width="124" height="24"/>
+  </g>
+  <g font-size="10" fill="#ffffff">
+    <rect x="36" y="300" width="80" height="28" rx="3" fill="#6b7a92"/><text x="52" y="318">Save draft</text>
+    <rect x="124" y="300" width="80" height="28" rx="3" fill="#6b7a92"/><text x="146" y="318">Validate</text>
+    <rect x="346" y="300" width="80" height="28" rx="3" fill="#6b7a92"/><text x="370" y="318">Reset</text>
+    <rect x="434" y="300" width="80" height="28" rx="3" fill="#6b7a92"/><text x="455" y="318">Submit</text>
+    <rect x="522" y="300" width="80" height="28" rx="3" fill="#6b7a92"/><text x="541" y="318">Export</text>
+  </g>
+</svg>

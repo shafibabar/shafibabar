@@ -417,14 +417,14 @@ section.tight { padding-block: var(--space-6); }
     0 2px 3px var(--shadow-1),
     0 10px 18px -6px var(--shadow-3);
 }
-.nav-links a[aria-current="page"] {
+.nav-links a[aria-current] {
   color: var(--color-accent);
   transform: none;
   background: var(--color-surface-sunken);
   border-color: var(--color-border);
   box-shadow: inset 0 2px 5px var(--shadow-in), 0 1px 0 var(--edge-highlight);
 }
-.nav-links a[aria-current="page"]::after {
+.nav-links a[aria-current]::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -1143,8 +1143,11 @@ th { color: var(--color-text-muted); font-weight: 700; }
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-raised);
 }
-.diagram-canvas img { width: 100%; height: auto; display: block; }
-.diagram-canvas.is-upgraded img { position: absolute; opacity: 0; pointer-events: none; }
+.diagram-canvas .diagram-static { width: 100%; height: auto; display: block; }
+/* The viewer mounts invisibly over the static SVG, then swaps in on success */
+.drawio-viewer { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.diagram-canvas.is-upgraded .drawio-viewer { position: relative; inset: auto; opacity: 1; pointer-events: auto; }
+.diagram-canvas.is-upgraded .diagram-static { position: absolute; top: 0; left: 0; opacity: 0; pointer-events: none; }
 .diagram figcaption { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-text-muted); }
 .diagram-text { margin-top: var(--space-2); font-size: var(--text-sm); }
 .diagram-text summary { cursor: pointer; font-weight: 600; color: var(--color-accent); }
@@ -1335,6 +1338,581 @@ th { color: var(--color-text-muted); font-weight: 700; }
 
 
 /* ==========================================================================
+   19d. Page hero with motif (Case Studies, AI Practice, Design)
+   ========================================================================== */
+.page-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-6);
+  align-items: center;
+}
+.motif-well--lg { width: 168px; height: 168px; }
+.motif-well--lg .iso-motif { width: 140px; height: 140px; }
+@media (max-width: 640px) {
+  .page-hero-grid { grid-template-columns: 1fr; }
+  .page-hero-grid .motif-well { order: -1; width: 112px; height: 112px; }
+  .page-hero-grid .iso-motif { width: 92px; height: 92px; }
+}
+.iso-cage { stroke: var(--color-accent); stroke-width: 1.25; stroke-linecap: round; }
+.iso-cage--back { stroke-dasharray: 2 3; opacity: 0.55; }
+
+/* Prose sections on depth pages */
+.depth-section { padding-block: var(--space-7); }
+.depth-section + .depth-section { border-top: 1px solid var(--color-border); }
+.depth-section h2 { margin-bottom: var(--space-3); }
+.depth-section .lead { color: var(--color-text-muted); font-size: var(--text-md); max-width: var(--prose-max); }
+.prose p, .prose li { max-width: var(--prose-max); }
+/* On a container, .prose caps its children, not the container, so text stays left-aligned with the page grid */
+.container.prose { max-width: var(--content-max); }
+.container.prose > * { max-width: var(--prose-max); }
+.stack > * + * { margin-top: var(--space-5); }
+.badge-demo {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 999px;
+  padding: 2px var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+/* Code */
+code, pre { font-family: var(--font-mono); font-size: 0.88em; }
+:not(pre) > code { background: var(--color-tag-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+pre {
+  overflow-x: auto;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-inset);
+  line-height: 1.5;
+}
+
+
+/* ==========================================================================
+   19e. Figure with caption and long description
+   <figure class="figure"> <div class="figure-body">…</div>
+     <figcaption>…</figcaption>
+     <details class="long-desc"><summary>Full description</summary>…</details>
+   </figure>
+   ========================================================================== */
+.figure { margin: var(--space-6) 0; }
+.figure-body img { margin-inline: auto; }
+.figure-body {
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-inset);
+}
+.figure figcaption, .chart figcaption, .before-after + p, .annotated figcaption {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.long-desc { margin-top: var(--space-2); font-size: var(--text-sm); }
+.long-desc summary, .chart-table summary { cursor: pointer; font-weight: 650; color: var(--color-accent); }
+.long-desc[open] summary { margin-bottom: var(--space-2); }
+
+
+/* ==========================================================================
+   19f. Isometric layered architecture (data-iso-arch)
+   The <ol> is the content; JS draws the stack beside it. Bottom layer first
+   in the DOM; shown top-first so the list lines up with the drawing.
+   ========================================================================== */
+.iso-arch { margin: var(--space-6) 0; }
+.iso-arch.is-enhanced {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: center;
+}
+.iso-arch.is-enhanced figcaption { grid-column: 1 / -1; }
+.iso-arch figcaption { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-text-muted); }
+.iso-arch__visual { max-width: 420px; justify-self: center; width: 100%; }
+.iso-arch__layers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-2);
+}
+.iso-arch__layers li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--gloss), linear-gradient(180deg, var(--color-surface), var(--color-surface-2));
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 0 var(--edge-highlight), 0 2px 6px -2px var(--shadow-2);
+  transition: transform var(--transition-normal), border-color var(--transition-normal);
+}
+.iso-arch__layers li > :not(.num) { grid-column: 2; }
+.iso-arch__layers li strong { display: block; }
+.iso-arch__layers li span:not(.num) { color: var(--color-text-muted); font-size: var(--text-sm); }
+.iso-arch__layers .num {
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  border: 1.5px solid var(--color-accent);
+  color: var(--color-text);
+}
+.iso-arch__layers li.is-active { transform: translateX(4px); border-color: var(--color-accent); }
+.iso-arch__layers li:focus-visible { outline-offset: 2px; }
+@media (max-width: 760px) {
+  .iso-arch.is-enhanced { grid-template-columns: 1fr; }
+  .iso-arch__visual { max-width: 300px; }
+}
+
+
+/* ==========================================================================
+   19g. Journey / flow  (<ol class="flow">)
+   Horizontal chevron flow on wide screens, vertical below 760px.
+   ========================================================================== */
+.flow {
+  list-style: none;
+  margin: var(--space-5) 0;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--space-5);
+  counter-reset: flow;
+}
+.flow li {
+  position: relative;
+  counter-increment: flow;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--gloss), linear-gradient(180deg, var(--color-surface), var(--color-surface-2));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-raised);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.flow li strong { display: block; color: var(--color-text); font-size: var(--text-base); margin-bottom: var(--space-1); }
+.flow li::before {
+  content: counter(flow, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+.flow li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(var(--space-5) * -0.5 - 5px);
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  transform: translateY(-50%) rotate(45deg);
+}
+@media (max-width: 760px) {
+  .flow { grid-auto-flow: row; }
+  .flow li:not(:last-child)::after {
+    top: auto;
+    bottom: calc(var(--space-5) * -0.5 - 5px);
+    right: 50%;
+    transform: translateX(50%) rotate(135deg);
+  }
+}
+
+
+/* ==========================================================================
+   19h. Roadmap timeline (Now / Next / Later lanes)
+   ========================================================================== */
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.roadmap-lane {
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-inset);
+}
+.roadmap-lane h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-3);
+}
+.roadmap-lane h3::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+}
+.roadmap-lane[data-lane="now"] h3::before { background: var(--color-accent); }
+.roadmap-lane[data-lane="next"] h3::before { background: linear-gradient(90deg, var(--color-accent) 50%, transparent 50%); }
+.roadmap-lane ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.roadmap-lane li {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  background: var(--gloss), var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 0 var(--edge-highlight), 0 2px 4px -2px var(--shadow-2);
+}
+.roadmap-lane li small { display: block; color: var(--color-text-faint); margin-top: 2px; }
+@media (max-width: 760px) { .roadmap { grid-template-columns: 1fr; } }
+
+
+/* ==========================================================================
+   19i. 2x2 prioritization matrix
+   <div class="matrix"> quadrant labels + <ul class="matrix-items">
+     <li style="--x:80;--y:70">Item <span class="visually-hidden">(quadrant)</span></li>
+   --x / --y are 0–100 along the horizontal / vertical axis.
+   ========================================================================== */
+.matrix { margin: var(--space-5) 0; max-width: 760px; }
+.matrix-plot {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+}
+.matrix-quadrant {
+  background: var(--color-surface-sunken);
+  padding: var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+.matrix-quadrant:nth-child(2) { background: var(--color-accent-soft); color: var(--color-accent); text-align: right; }
+.matrix-quadrant:nth-child(4) { text-align: right; align-self: stretch; display: flex; align-items: flex-end; justify-content: flex-end; }
+.matrix-quadrant:nth-child(3) { display: flex; align-items: flex-end; }
+.matrix-items { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; }
+.matrix-items li {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  bottom: calc(var(--y) * 1%);
+  transform: translate(-50%, 50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 650;
+  white-space: nowrap;
+  background: var(--gloss), var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 4px 10px -4px var(--shadow-3);
+}
+.matrix-items li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 2px var(--color-surface); }
+.matrix-axes { display: flex; justify-content: space-between; margin-top: var(--space-2); font-size: var(--text-xs); color: var(--color-text-faint); font-weight: 600; }
+
+
+/* ==========================================================================
+   19j. Stat card (value + label + optional delta + sparkline)
+   ========================================================================== */
+.stat-card .tile-stat { margin-bottom: var(--space-2); }
+.stat-label { font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+.stat-delta { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); font-weight: 700; color: var(--color-text-muted); }
+.stat-delta svg { width: 14px; height: 14px; color: var(--color-accent); }
+
+
+/* ==========================================================================
+   19k. Before / after
+   No-JS: two captioned panes side by side. Enhanced: stacked panes, the
+   after pane clipped by --pos, a range input on top for pointer + keyboard.
+   ========================================================================== */
+.before-after { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-5) 0; max-width: 760px; }
+.ba-pane { margin: 0; }
+.ba-pane img { width: 100%; height: auto; border-radius: var(--radius-md); border: 1px solid var(--color-border); background: #fff; }
+.ba-pane figcaption { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); }
+.before-after.is-enhanced { display: block; }
+.ba-stage { position: relative; display: grid; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-raised); }
+.ba-stage .ba-pane { grid-area: 1 / 1; position: relative; }
+.ba-stage .ba-pane img { border: 0; border-radius: 0; }
+.ba-stage .ba-after { clip-path: inset(0 0 0 var(--pos, 50%)); }
+.ba-stage .ba-pane figcaption {
+  position: absolute;
+  top: var(--space-3);
+  margin: 0;
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #fff;
+  background: rgba(8, 12, 20, 0.72);
+}
+.ba-stage .ba-before figcaption { left: var(--space-3); }
+.ba-stage .ba-after figcaption { right: var(--space-3); }
+.ba-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos, 50%);
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+.ba-handle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #fff, #dfe5ee 55%, #b7c1d0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 1px #fff;
+}
+.ba-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+.ba-stage:focus-within { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+@media (max-width: 560px) { .before-after:not(.is-enhanced) { grid-template-columns: 1fr; } }
+
+
+/* ==========================================================================
+   19l. Annotated screenshot
+   Markers are links to their notes; --x / --y are percentages of the image.
+   ========================================================================== */
+.annotated { margin: var(--space-5) 0; max-width: 900px; }
+.annotated-frame { position: relative; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); box-shadow: var(--shadow-raised); background: #fff; }
+.annotated-frame img { width: 100%; height: auto; }
+.marker {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(180deg, #4566f2, #2447e0);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(10, 20, 50, 0.35);
+  transition: transform var(--transition-fast);
+}
+.marker:hover, .marker.is-active { color: #fff; transform: translate(-50%, -50%) scale(1.15); }
+.annotated-notes { margin: var(--space-4) 0 0; padding-left: 1.5em; display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+.annotated-notes li { padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); border-left: 3px solid transparent; transition: background-color var(--transition-fast), border-color var(--transition-fast); }
+.annotated-notes li.is-active, .annotated-notes li:target { background: var(--color-accent-soft); border-left-color: var(--color-accent); }
+
+
+/* ==========================================================================
+   19m. Comparison table
+   Marks pair an icon with a word, never color alone.
+   ========================================================================== */
+.table-scroll { overflow-x: auto; margin: var(--space-5) 0; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-raised); background: var(--color-surface); }
+.compare-table { min-width: 560px; }
+.compare-table thead th { background: var(--color-surface-2); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; }
+.compare-table tbody th { font-weight: 650; color: var(--color-text); }
+.compare-table td, .compare-table th { padding: var(--space-3) var(--space-4); }
+.compare-table tr:last-child > * { border-bottom: 0; }
+.mark { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.mark svg { width: 16px; height: 16px; flex-shrink: 0; }
+.mark--yes svg { color: var(--color-accent); }
+.mark--no { color: var(--color-text-faint); }
+.mark--partial svg { color: var(--color-accent-3); }
+
+
+/* ==========================================================================
+   19n. Process stepper  (<ol class="stepper">, current step aria-current="step")
+   ========================================================================== */
+.stepper {
+  list-style: none;
+  margin: var(--space-5) 0;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  counter-reset: step;
+}
+.stepper li {
+  position: relative;
+  counter-increment: step;
+  padding: 0 var(--space-2);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.stepper li::before {
+  content: counter(step);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto var(--space-2);
+  border-radius: 50%;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-inset);
+}
+.stepper li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: calc(50% + 22px);
+  right: calc(-50% + 22px);
+  height: 2px;
+  background: var(--color-border-strong);
+}
+.stepper li strong { display: block; color: var(--color-text); }
+.stepper li.is-done::before { content: "✓"; color: var(--color-accent-contrast); background: var(--color-accent); border-color: transparent; box-shadow: 0 3px 8px -2px var(--glow); }
+.stepper li.is-done::after { background: var(--color-accent); }
+.stepper li[aria-current="step"]::before {
+  color: var(--color-accent);
+  background: var(--gloss), var(--color-surface);
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-accent-soft), 0 6px 14px -4px var(--glow);
+}
+.stepper li[aria-current="step"] strong { color: var(--color-accent); }
+@media (max-width: 760px) {
+  .stepper { grid-auto-flow: row; gap: var(--space-4); }
+  .stepper li { display: grid; grid-template-columns: 36px 1fr; column-gap: var(--space-3); text-align: left; padding: 0; }
+  .stepper li::before { margin: 0; grid-row: 1 / span 2; }
+  .stepper li:not(:last-child)::after { top: 40px; bottom: calc(var(--space-4) * -1); left: 17px; right: auto; width: 2px; height: auto; }
+}
+
+
+/* ==========================================================================
+   19o. Charts (bar / line / sparkline) — see visuals.js initCharts
+   Marks: bars ≤24px with a 4px rounded data-end, 2px lines, 10% area
+   wash, end dot with a 2px surface ring, hairline solid gridlines.
+   ========================================================================== */
+.chart { margin: var(--space-5) 0; }
+.chart figcaption { margin: 0 0 var(--space-3); font-weight: 700; color: var(--color-text); font-size: var(--text-base); }
+.chart-wrap { position: relative; }
+.chart-svg { width: 100%; height: auto; display: block; overflow: visible; border-radius: var(--radius-sm); }
+.chart-svg--spark { max-width: 200px; }
+.chart-svg:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 4px; }
+.chart-grid { stroke: var(--color-border); stroke-width: 1; }
+.chart-tick { fill: var(--color-text-faint); font: 600 11px var(--font-sans); }
+.chart-value { fill: var(--color-text); font: 700 12px var(--font-sans); }
+.chart-bar { fill: var(--color-accent); transition: opacity var(--transition-fast); }
+.chart-svg:hover .chart-bar:not(.is-active), .chart-svg:focus .chart-bar:not(.is-active) { opacity: 0.55; }
+.chart-svg:not(:hover):not(:focus) .chart-bar { opacity: 1; }
+.chart-line { fill: none; stroke: var(--color-accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart-area { fill: var(--color-accent); opacity: 0.1; }
+.chart-dot { fill: var(--color-accent); stroke: var(--color-surface); stroke-width: 2; }
+.chart-dot--focus, .chart-cross { opacity: 0; }
+.chart-svg.is-hovering .chart-dot--focus, .chart-svg.is-hovering .chart-cross { opacity: 1; }
+.chart-cross { stroke: var(--color-text-faint); stroke-width: 1; }
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, calc(-100% - 12px));
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-lifted);
+  transition: opacity var(--transition-fast);
+}
+.chart-tooltip.is-visible { opacity: 1; }
+.chart-tooltip strong { display: block; font-size: var(--text-sm); color: var(--color-text); }
+.chart-tooltip span { color: var(--color-text-muted); }
+.chart-table { margin-top: var(--space-3); font-size: var(--text-sm); }
+.chart-table table { margin-top: var(--space-2); max-width: 360px; }
+
+
+/* ==========================================================================
+   19p. Design system page
+   ========================================================================== */
+.ds-nav { display: flex; flex-wrap: wrap; gap: var(--space-2); list-style: none; margin: var(--space-5) 0 0; padding: 0; }
+.ds-section { padding-block: var(--space-7); border-top: 1px solid var(--color-border); }
+.ds-section h2 { margin-bottom: var(--space-2); }
+.ds-section > .container > p.lead { color: var(--color-text-muted); max-width: var(--prose-max); margin-bottom: var(--space-5); }
+.ds-usage { font-size: var(--text-sm); color: var(--color-text-muted); max-width: var(--prose-max); }
+.ds-usage strong { color: var(--color-text); }
+.ds-demo { margin-block: var(--space-4) var(--space-6); }
+.ds-demo > h3 { font-size: var(--text-md); margin-bottom: var(--space-1); }
+
+.theme-panels { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.theme-panel {
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+}
+.theme-panel[data-scheme="light"] { color-scheme: light; }
+.theme-panel[data-scheme="dark"] { color-scheme: dark; }
+.theme-panel h3 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: 0.1em; }
+@media (max-width: 760px) { .theme-panels { grid-template-columns: 1fr; } }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
+.swatch { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); background: var(--color-surface); }
+.swatch-chip { height: 52px; border-bottom: 1px solid var(--color-border); }
+.swatch-meta { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
+.swatch-meta code { background: none; padding: 0; font-size: 0.72rem; color: var(--color-text); }
+.swatch-meta .val { display: block; color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.7rem; }
+.contrast-table { font-size: var(--text-xs); margin-top: var(--space-4); }
+.contrast-table td, .contrast-table th { padding: var(--space-2); }
+.pass { font-weight: 700; }
+.type-row { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-4); align-items: baseline; padding-block: var(--space-2); border-bottom: 1px solid var(--color-border); }
+.type-row code { font-size: var(--text-xs); color: var(--color-text-faint); background: none; padding: 0; }
+.type-row span { line-height: 1.2; overflow-wrap: anywhere; }
+.space-row { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-4); align-items: center; padding-block: var(--space-1); }
+.space-row code { font-size: var(--text-xs); background: none; padding: 0; color: var(--color-text-faint); }
+.space-bar { height: 14px; border-radius: 3px; background: var(--color-accent); box-shadow: 0 0 0 1px var(--color-border); }
+.primitive-grid { margin-bottom: var(--space-5); display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-4); }
+.primitive-grid figure { margin: 0; text-align: center; }
+.primitive-grid .motif-well { margin: 0 auto var(--space-2); }
+.primitive-grid figcaption { font-size: var(--text-sm); font-weight: 650; }
+.primitive-grid figcaption span { display: block; font-weight: 400; color: var(--color-text-muted); font-size: var(--text-xs); }
+.surface-demo { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-4); }
+.surface-demo > div { min-height: 110px; border-radius: var(--radius-lg); padding: var(--space-4); font-size: var(--text-sm); font-weight: 650; }
+
+
+/* ==========================================================================
    20. Footer
    ========================================================================== */
 .site-footer {
@@ -1413,6 +1991,8 @@ th { color: var(--color-text-muted); font-weight: 700; }
   .skills-grid p { display: inline; color: #000; font-size: 9pt; }
   .skills-grid p::after { content: ""; display: block; }
   .card, .tile, .surface-raised, .surface-glass { box-shadow: none; background: #fff; border-color: #999; }
-  .diagram-canvas.is-upgraded img { position: static; opacity: 1; }
-  .diagram-canvas .drawio-viewer { display: none; }
+  .diagram-canvas.is-upgraded .diagram-static { position: static; opacity: 1; }
+  .diagram-canvas .drawio-viewer { display: none !important; }
+  .diagram-text { display: block; }
+  .diagram-text > *:not(summary) { display: block; }
 }
