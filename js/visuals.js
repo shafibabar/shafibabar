@@ -298,7 +298,7 @@
   function niceMax(v) {
     if (v <= 0) return 1;
     var pow = Math.pow(10, Math.floor(Math.log10(v)));
-    var steps = [1, 2, 2.5, 5, 10];
+    var steps = [1, 2, 2.5, 3, 4, 5, 10];
     for (var i = 0; i < steps.length; i++) if (steps[i] * pow >= v) return steps[i] * pow;
     return 10 * pow;
   }

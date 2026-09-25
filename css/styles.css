@@ -402,6 +402,7 @@ section.tight { padding-block: var(--space-6); }
   text-decoration: none;
   font-size: var(--text-sm);
   font-weight: 650;
+  white-space: nowrap;
   border: 1px solid transparent;
   transition: transform var(--transition-normal), box-shadow var(--transition-normal),
               background-color var(--transition-normal), color var(--transition-fast);
@@ -454,7 +455,7 @@ section.tight { padding-block: var(--space-6); }
 }
 .nav-toggle:active { box-shadow: var(--shadow-inset); }
 
-@media (max-width: 960px) {
+@media (max-width: 1060px) {
   .nav-toggle { display: inline-flex; }
   .nav-links {
     position: absolute;
@@ -1172,6 +1173,16 @@ th { color: var(--color-text-muted); font-weight: 700; }
 .skills-grid p { color: var(--color-text-muted); font-size: var(--text-sm); margin-bottom: 0; }
 
 
+/* Home: "How I build" summary tile */
+.build-tile { display: grid; grid-template-columns: 1fr auto; gap: var(--space-5) var(--space-7); align-items: center; }
+.build-tile h3 { font-size: var(--text-lg); }
+.build-tile__stats { display: flex; gap: var(--space-6); margin: 0; }
+.build-tile__stats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+.build-tile__stats dt { font-size: var(--text-sm); color: var(--color-text-muted); max-width: 16ch; }
+.build-tile__stats dd { margin: 0 0 var(--space-1); }
+.build-tile .project-footer { grid-column: 1 / -1; padding-top: 0; }
+@media (max-width: 760px) { .build-tile { grid-template-columns: 1fr; } }
+
 /* ==========================================================================
    19b. Portfolio: pillars and project cards
    Markup:
@@ -1742,7 +1753,7 @@ pre {
    19m. Comparison table
    Marks pair an icon with a word, never color alone.
    ========================================================================== */
-.table-scroll { overflow-x: auto; margin: var(--space-5) 0; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-raised); background: var(--color-surface); }
+.table-scroll { position: relative; overflow-x: auto; margin: var(--space-5) 0; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-raised); background: var(--color-surface); }
 .compare-table { min-width: 560px; }
 .compare-table thead th { background: var(--color-surface-2); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; }
 .compare-table tbody th { font-weight: 650; color: var(--color-text); }
@@ -1826,7 +1837,7 @@ pre {
    ========================================================================== */
 .chart { margin: var(--space-5) 0; }
 .chart figcaption { margin: 0 0 var(--space-3); font-weight: 700; color: var(--color-text); font-size: var(--text-base); }
-.chart-wrap { position: relative; }
+.chart-wrap { position: relative; max-width: 720px; }
 .chart-svg { width: 100%; height: auto; display: block; overflow: visible; border-radius: var(--radius-sm); }
 .chart-svg--spark { max-width: 200px; }
 .chart-svg:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 4px; }
@@ -1860,7 +1871,7 @@ pre {
 .chart-tooltip.is-visible { opacity: 1; }
 .chart-tooltip strong { display: block; font-size: var(--text-sm); color: var(--color-text); }
 .chart-tooltip span { color: var(--color-text-muted); }
-.chart-table { margin-top: var(--space-3); font-size: var(--text-sm); }
+.chart-table { margin-top: var(--space-3); font-size: var(--text-sm); max-width: 100%; overflow-x: auto; }
 .chart-table table { margin-top: var(--space-2); max-width: 360px; }
 
 
