@@ -911,7 +911,17 @@ section.tight { padding-block: var(--space-6); }
 .motif-card .z-3 { --zs: 0.946; }
 .motif-card .z-4 { --zs: 0.91; }
 .motif-card .depth svg { width: 100%; height: 100%; overflow: visible; }
-.motif-card .z-4 svg { filter: drop-shadow(0 14px 10px var(--shadow-3)); }
+/* The brick being placed glows in the accent blue */
+.motif-card { --bk-glow: light-dark(rgba(36, 71, 224, 0.55), rgba(62, 166, 255, 0.85)); }
+.motif-card .z-4 svg {
+  filter: drop-shadow(0 0 4px var(--bk-glow)) drop-shadow(0 0 14px var(--bk-glow)) drop-shadow(0 16px 10px var(--shadow-3));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .motif-card .z-4 svg { animation: brick-glow 3.2s ease-in-out infinite; }
+}
+@keyframes brick-glow {
+  50% { filter: drop-shadow(0 0 2px var(--bk-glow)) drop-shadow(0 0 8px var(--bk-glow)) drop-shadow(0 16px 10px var(--shadow-3)); }
+}
 @media (max-width: 640px) {
   .page-hero-grid .motif-card { order: -1; width: 180px; }
 }
@@ -925,13 +935,19 @@ section.tight { padding-block: var(--space-6); }
 .bk .bk-gloss { fill: url(#bk-gloss); stroke: none; }
 .bk .bk-hi { fill: #fff; opacity: 0.55; stroke: none; }
 .bk .bk-edge-hi { fill: none; stroke: #fff; stroke-opacity: 0.6; stroke-width: 0.7; stroke-linecap: round; }
-.bk-blue   { --bk-top: light-dark(#6b8bff, #7aa6ff); --bk-left: light-dark(#2f55e8, #3f7cf0); --bk-right: light-dark(#1c37b0, #2a5bc8); }
-.bk-teal   { --bk-top: light-dark(#3fd0c2, #4fe0d2); --bk-left: light-dark(#13a092, #1cb3a4); --bk-right: light-dark(#0b7168, #10857a); }
-.bk-violet { --bk-top: light-dark(#a78bff, #b49cff); --bk-left: light-dark(#7148ea, #7d57f0); --bk-right: light-dark(#4f2cc0, #5a37cc); }
-.bk-amber  { --bk-top: light-dark(#ffd06b, #ffd77f); --bk-left: light-dark(#f0a51f, #f5ad2c); --bk-right: light-dark(#bf7a0c, #c98312); }
-.bk-white  { --bk-top: light-dark(#ffffff, #e9eef6); --bk-left: light-dark(#d5ddeb, #b7c2d6); --bk-right: light-dark(#aebbd1, #8e9bb3); }
-.bk-plate  { --bk-top: light-dark(#e4eaf5, #2c3957); --bk-left: light-dark(#c3cde0, #1f2940); --bk-right: light-dark(#a9b6cd, #172033); }
-.bk { --bk-edge: light-dark(rgba(12, 22, 48, 0.35), rgba(0, 0, 0, 0.55)); }
+/* Palette: neutrals (white → black) plus two blues from the theme accent.
+   Each shade has its own light- and dark-theme values. */
+.bk-white    { --bk-top: light-dark(#ffffff, #eef2f7); --bk-left: light-dark(#d9dfe9, #bcc5d3); --bk-right: light-dark(#b3bdcc, #8f9aab); }
+.bk-silver   { --bk-top: light-dark(#e3e8ef, #c4ccd8); --bk-left: light-dark(#b9c2cf, #939eae); --bk-right: light-dark(#939eae, #6d7888); }
+.bk-gray     { --bk-top: light-dark(#aeb7c4, #8e98a8); --bk-left: light-dark(#858f9e, #677180); --bk-right: light-dark(#677180, #4b5462); }
+.bk-graphite { --bk-top: light-dark(#6b7483, #5a6371); --bk-left: light-dark(#4d5562, #3f4652); --bk-right: light-dark(#394049, #2c323b); }
+.bk-charcoal { --bk-top: light-dark(#454c57, #3a414c); --bk-left: light-dark(#30363f, #282d35); --bk-right: light-dark(#22272e, #1b1f25); }
+.bk-black    { --bk-top: light-dark(#2a2f37, #23272e); --bk-left: light-dark(#1a1e24, #15181d); --bk-right: light-dark(#101317, #0c0e11); }
+.bk-blue     { --bk-top: light-dark(#5b7cff, #4db0ff); --bk-left: light-dark(#2447e0, #2a8ae6); --bk-right: light-dark(#1a36b8, #1a64b0); }
+.bk-navy     { --bk-top: light-dark(#3a56c9, #2f6fb8); --bk-left: light-dark(#233a9e, #1f528f); --bk-right: light-dark(#172a78, #153a68); }
+.bk-plate    { --bk-top: light-dark(#e4eaf5, #2a3140); --bk-left: light-dark(#c3cde0, #1e242f); --bk-right: light-dark(#a9b6cd, #161b23); }
+/* Edges: a dark outline in light mode, a faint cool rim light in dark mode so black bricks still read */
+.bk { --bk-edge: light-dark(rgba(12, 22, 48, 0.35), rgba(150, 185, 230, 0.28)); }
 
 .profile-photo {
   width: 112px;
